@@ -14,7 +14,7 @@ class MyComponent extends React.Component {
       );
     }
 
-//declaration of all states and table data
+    //declaration of all states and table data
     this.state = {
       error: null,
       isLoaded: false,
@@ -131,17 +131,38 @@ class MyComponent extends React.Component {
     };
   }
 
-//fetch price of ether from ether scan
+  //fetch price of ether from ether scan
   getEtherPrice() {
+    // fetch(
+    //   "https://api.etherscan.io/api?module=stats&action=ethprice&apikey=G3YFDTNGGMTBCRRQEZ65CC6NR6RB4HC47U"
+    // )
+    //   .then(res => res.json())
+    //   .then(
+    //     result => {
+    //       this.setState({
+    //         etherPrice: result.result.ethusd,
+    //         isLoaded: true
+    //       });
+    //     },
+
+    //     // Handle errors.
+    //     error => {
+    //       this.setState({
+    //         error
+    //       });
+    //     }
+    //   );
+
     fetch(
-      "https://api.etherscan.io/api?module=stats&action=ethprice&apikey=G3YFDTNGGMTBCRRQEZ65CC6NR6RB4HC47U"
+      `https://api.etherscan.io/api?module=stats&action=ethprice&apikey=G3YFDTNGGMTBCRRQEZ65CC6NR6RB4HC47U`
     )
       .then(res => res.json())
       .then(
         result => {
           this.setState({
             etherPrice: result.result.ethusd,
-            isLoaded: true
+
+            balance: result.result
           });
         },
 
@@ -154,7 +175,7 @@ class MyComponent extends React.Component {
       );
   }
 
-//get address balance from ether scan
+  //get address balance from ether scan
   getBalance() {
     fetch(
       `https://api.etherscan.io/api?module=account&action=balance&address=${
@@ -181,12 +202,12 @@ class MyComponent extends React.Component {
         }
       );
   }
-//get all erc20 transactions to address from ether scan
+  //get all erc20 transactions to address from ether scan
   getERC20Transactions() {
     fetch(
-      `http://api.etherscan.io/api?module=account&action=tokentx&address=${
+      `https://api.etherscan.io/api?module=account&action=txlist&address=${
         this.props.match.params.address
-      }&startblock=0&endblock=999999999&sort=asc&apikey=G3YFDTNGGMTBCRRQEZ65CC6NR6RB4HC47U`
+      }&startblock=0&endblock=99999999&sort=asc&apikey=YourApiKeyToken`
     )
       .then(res => res.json())
       .then(
@@ -208,12 +229,13 @@ class MyComponent extends React.Component {
         }
       );
   }
-//get all tra to address from ether scan
+  //get all tra to address from ether scan
+  //https://api.etherscan.io/api?module=account&action=txlist&address=0xde0b295669a9fd93d5f28d9ec85e40f4cb697bae&startblock=0&endblock=99999999&sort=asc&apikey=YourApiKeyToken
   getAllTransactions() {
     fetch(
-      `http://api.etherscan.io/api?module=account&action=txlist&address=${
+      `https://api.etherscan.io/api?module=account&action=txlist&address=${
         this.props.match.params.address
-      }&startblock=0&endblock=99999999&sort=asc&apikey=G3YFDTNGGMTBCRRQEZ65CC6NR6RB4HC47U`
+      }&startblock=0&endblock=99999999&sort=asc&apikey=YourApiKeyToken`
     )
       .then(res => res.json())
       .then(
@@ -242,10 +264,11 @@ class MyComponent extends React.Component {
     this.setState.ERC20Loading = true;
 
     //call neccesary function to gather and organize data
-    this.getEtherPrice();
+
     this.getAllTransactions();
     this.getERC20Transactions();
     this.getBalance();
+    // this.getEtherPrice();
   }
 
   //call render method
@@ -269,7 +292,7 @@ class MyComponent extends React.Component {
     if (!isLoaded) {
       this.componentDidMount();
     }
-    //error check 
+    //error check
     if (error) {
       return <div>Error: {error.message}</div>;
     } else {
@@ -314,27 +337,6 @@ class MyComponent extends React.Component {
                 }}
               >
                 {(balance / 1000000000000000000).toFixed(5)}
-              </h4>
-
-              <h4
-                style={{ marginLeft: "20px", fontSize: "15px", color: "black" }}
-              >
-                Balance(USD):
-              </h4>
-              <h4
-                style={{
-                  marginLeft: "10px",
-                  fontSize: "15px",
-                  color: "#32CD32"
-                }}
-              >
-                {((etherPrice * balance) / 1000000000000000000).toLocaleString(
-                  "en-US",
-                  {
-                    style: "currency",
-                    currency: "USD"
-                  }
-                )}
               </h4>
             </div>
             <Tabs defaultActiveKey="1" onChange={this.callback}>

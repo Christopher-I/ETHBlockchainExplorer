@@ -45,6 +45,7 @@ class SearchBar extends React.Component {
   }
   //Push page to address information page if user enters address number
   getAddressInfo(event) {
+    console.log("I am here");
     this.props.history.push(`/address/${this.state.query}`);
   }
 
